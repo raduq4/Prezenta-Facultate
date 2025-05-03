@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Monitorizare Prezențe</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding: 14px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    th {
+      background: #007bff;
+      color: #fff;
+      font-weight: 600;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    button {
+      padding: 6px 12px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .prezente {
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Monitorizare Prezențe pe Materii</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Materie</th>
+      <th>Tip Activitate</th>
+      <th>Prezențe Realizate</th>
+      <th>Prezențe Necesare</th>
+      <th>Profesor</th>
+      <th>Adaugă</th>
+    </tr>
+  </thead>
+  <tbody id="tabel-prezente">
+    <!-- Dinamic -->
+  </tbody>
+</table>
+
+<script>
+  const activitati = [
+    { materie: "Automate si Microprogramare", tip: "Impara - Proiect", necesare: 5, profesor: "Eugen Gergely" },
+    { materie: "Automate si Microprogramare", tip: "Saptamanal - Curs", necesare: 14, profesor: "Eugen Gergely" },
+    { materie: "Automate si Microprogramare", tip: "Saptamanal - Laborator", necesare: 14, profesor: "Eugen Gergely" },
+    { materie: "Economie Generala", tip: "Saptamanal - Curs", necesare: 14, profesor: "Liliana Magdoiu" },
+    { materie: "Ingineria Reglarii Automate", tip: "Impara - Laborator", necesare: 7, profesor: "Claudiu Costea" },
+    { materie: "Ingineria Reglarii Automate", tip: "Saptamanal - Curs", necesare: 14, profesor: "Sanda Sale" },
+    { materie: "Masini Electrice si Actionari", tip: "Impara - Proiect", necesare: 5, profesor: "Claudiu Costea" },
+    { materie: "Masini Electrice si Actionari", tip: "Saptamanal - Curs", necesare: 14, profesor: "Helga Silaghi" },
+    { materie: "Masini Electrice si Actionari", tip: "Saptamanal - Laborator", necesare: 14, profesor: "Viorica Spoiala" },
+    { materie: "Microcontrolere in Automatizari", tip: "Saptamanal - Curs", necesare: 14, profesor: "Viorica Spoiala" },
+    { materie: "Microcontrolere in Automatizari", tip: "Saptamanal - Laborator", necesare: 14, profesor: "Viorica Spoiala" },
+    { materie: "Sisteme cu evenimente discrete", tip: "Impara - Laborator", necesare: 7, profesor: "Diana Mesaros" },
+    { materie: "Sisteme cu evenimente discrete", tip: "Saptamanal - Curs", necesare: 14, profesor: "Laura Coroiu" },
+    { materie: "Sisteme cu microprocesoare", tip: "Impara - Laborator", necesare: 7, profesor: "Zoltan Kovendi" },
+    { materie: "Sisteme cu microprocesoare", tip: "Saptamanal - Curs", necesare: 14, profesor: "Dragos Spoiala" }
+  ];
+
+  // Sortează alfabetic
+  activitati.sort((a, b) => a.materie.localeCompare(b.materie));
+
+  let prezente = JSON.parse(localStorage.getItem("prezente")) || {};
+
+  const tabel = document.getElementById("tabel-prezente");
+
+  activitati.forEach((item, index) => {
+    const id = `${item.materie} - ${item.tip}`;
+    if (!(id in prezente)) prezente[id] = 0;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${item.materie}</td>
+      <td>${item.tip}</td>
+      <td class="prezente" id="prezenta-${index}">${prezente[id]}</td>
+      <td>${item.necesare}</td>
+      <td>${item.profesor}</td>
+      <td><button onclick="adaugaPrezenta('${id}', ${index})">+1</button></td>
+    `;
+    tabel.appendChild(row);
+  });
+
+  function adaugaPrezenta(id, index) {
+    prezente[id]++;
+    document.getElementById(`prezenta-${index}`).innerText = prezente[id];
+    localStorage.setItem("prezente", JSON.stringify(prezente));
+  }
+</script>
+
+</body>
+</html>
